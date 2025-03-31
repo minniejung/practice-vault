@@ -59,6 +59,11 @@ contract SimpleVault {
         uint256 interest = (amount * interestRate) / 100; // 5% 이자
         uint256 payout = amount + interest;
 
+        require(
+            address(this).balance >= payout,
+            "Vault has insufficient balance"
+        );
+
         stakedBalances[msg.sender] -= amount;
         stakeTimestamps[msg.sender] = 0; // 출금 후 초기화 (선택)
 
@@ -78,4 +83,6 @@ contract SimpleVault {
     function isUnlocked() public view returns (bool) {
         return block.timestamp >= stakeTimestamps[msg.sender] + lockPeriod;
     }
+
+    receive() external payable {}
 }

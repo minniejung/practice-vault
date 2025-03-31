@@ -88,6 +88,12 @@ describe("SimpleVault", function () {
     console.log("⏰ now:", now);
     console.log("🔓 unlockTime:", unlock.toString());
 
+    try {
+      await vault.connect(user).withdraw(stakeAmount);
+    } catch (e: any) {
+      console.log("🔥 Revert reason:", e.message);
+    }
+
     await expect(vault.connect(user).withdraw(stakeAmount)).to.be.revertedWith(
       "Staking period not met"
     );
@@ -99,6 +105,12 @@ describe("SimpleVault", function () {
 
     await vault.connect(user).stake({ value: stakeAmount });
 
+    // ⏩ Add extra ETH to the vault so it can pay interest
+    await owner.sendTransaction({
+      to: await vault.getAddress(),
+      value: ethers.parseEther("0.1"),
+    });
+
     // increase time by 61 seconds
     await ethers.provider.send("evm_increaseTime", [lockPeriod + 1]);
     await ethers.provider.send("evm_mine", []);
@@ -107,16 +119,14 @@ describe("SimpleVault", function () {
 
     const tx = await vault.connect(user).withdraw(stakeAmount);
     const receipt = await tx.wait();
-    const gasUsed = receipt.gasUsed * receipt.gasPrice;
-
+    const gasUsed = receipt.gasUsed;
+    const gasPrice = receipt.gasPrice ?? 0n;
+    const gasCost = BigInt(gasUsed) * BigInt(gasPrice);
     const userBalanceAfter = await ethers.provider.getBalance(user.address);
 
     const interest = (stakeAmount * BigInt(interestRate)) / BigInt(100);
     const expected =
-      BigInt(userBalanceBefore) +
-      BigInt(stakeAmount) +
-      BigInt(interest) -
-      BigInt(gasUsed);
+      BigInt(userBalanceBefore) + stakeAmount + interest - gasCost;
 
     expect(userBalanceAfter).to.be.closeTo(expected, ethers.parseEther("0.01"));
 
