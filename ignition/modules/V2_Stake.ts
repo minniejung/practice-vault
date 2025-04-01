@@ -3,10 +3,10 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const SimpleVaultModule = buildModule("SimpleVaultModule", (m) => {
-  const simpleVault = m.contract("SimpleVault");
+const V2_StakeModule = buildModule("V2_StakeModule", (m) => {
+  const v2_Stake = m.contract("V2_Stake");
 
-  return { simpleVault };
+  return { v2_Stake };
 });
 
-export default SimpleVaultModule;
+export default V2_StakeModule;
