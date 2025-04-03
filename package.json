@@ -1,10 +1,12 @@
 {
   "name": "hardhat-project",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "test:watch": "chokidar 'contracts/**/*.sol' 'test/**/*.ts' -c 'npx hardhat test'"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "chokidar-cli": "^3.0.0",
     "hardhat": "^2.22.19"
   }
 }

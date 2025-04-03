@@ -55,8 +55,10 @@ contract V2_Stake {
 
         stakedBalances[msg.sender] -= amount;
         stakeTimestamps[msg.sender] = 0; // 출금 후 초기화 (선택)
+        // delete stakeTimestamps[msg.sender];
 
-        payable(msg.sender).transfer(payout);
+        (bool success, ) = msg.sender.call{value: payout}("");
+        require(success, "Withdraw failed");
 
         emit Withdrawn(msg.sender, amount, interest);
     }

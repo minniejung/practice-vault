@@ -60,7 +60,9 @@ contract V3_SimpleVault {
 
         stakedBalances[msg.sender] -= totalWithdrawn;
 
-        payable(msg.sender).transfer(totalPayout);
+        (bool success, ) = msg.sender.call{value: totalPayout}("");
+        require(success, "Withdraw failed");
+
         emit Withdrawn(
             msg.sender,
             totalWithdrawn,

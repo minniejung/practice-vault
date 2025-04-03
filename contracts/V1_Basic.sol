@@ -22,7 +22,9 @@ contract V1_Basic {
         // TODO : 아니면, msg.sender에게 ETH 전송
         // TODO : stakedBalances에서 차감
         require(stakedBalances[msg.sender] >= amount, "Not enough balance");
-        payable(msg.sender).transfer(amount);
         stakedBalances[msg.sender] -= amount;
+
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
     }
 }

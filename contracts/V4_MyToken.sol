@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-contract MyToken {
+contract V4_MyToken {
     string public tokenName;
     string public tokenSymbol;
     uint8 public decimals = 18;

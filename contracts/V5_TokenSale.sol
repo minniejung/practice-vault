@@ -41,6 +41,7 @@ contract TokenSale {
         require(msg.sender == owner, "Only the owner can withdraw ETH");
         require(address(this).balance > 0, "No ETH to withdraw");
 
-        payable(msg.sender).transfer(address(this).balance);
+        (bool sent, ) = msg.sender.call{value: address(this).balance}("");
+        require(sent, "Failed to send Ether");
     }
 }
